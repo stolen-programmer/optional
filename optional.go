@@ -11,7 +11,7 @@ type optional struct {
 
 func (o *optional) OrElse(v interface{}) interface{} {
 
-	if isNil(o.v) {
+	if o == Empty {
 		return v
 	}
 
@@ -19,7 +19,7 @@ func (o *optional) OrElse(v interface{}) interface{} {
 }
 
 func (o *optional) Map(mapping func(old interface{}) (v interface{})) Optional {
-	if isNil(o.v) {
+	if o == Empty {
 		return o
 	}
 
@@ -28,12 +28,14 @@ func (o *optional) Map(mapping func(old interface{}) (v interface{})) Optional {
 		return op
 	}
 
-	return &optional{
-		v: v,
-	}
+	return OfNullable(v)
 }
 
 func OfNullable(v interface{}) Optional {
+
+	if v == nil || isNil(v) {
+		return Empty
+	}
 
 	return &optional{
 		v: v,
